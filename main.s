@@ -158,19 +158,27 @@ Debug_Init
 	  LDR R1, =DataPt
 	  STR R0, [R1]		; store data buffer starting address into the data pointer
 	  
-	  LDR R2, =TimeBuffer
-	  LDR R3, =TimePt	
-	  STR R2, [R3]		; store time buffer starting address into the time pointer
+	  ; set all entries of the data buffer to 0xFF
+	  MOV R2, #0xFF
+loop1 STR R2, [R0]		; store 0xFF in element of data buffer
+	  ADD R0, #1		; increment to next location of array
+	  CMP R0, #100		; check if end of array is reached and exit loop if so
+	  BHS loop1
 	  
 	  
+	  LDR R0, =TimeBuffer
+	  LDR R1, =TimePt
+	  STR R0, [R1]
 	  
+	  ; set all entries of the time buffer to 0xFFFFFFFF
+	  MOV R2, #0xFFFFFFFF	
+loop2 STR R2, [R0]		; store 0xFFFFFFFF in element of time buffer
+	  ADD R0, #4		; increment to next location (since 32 bit, add 4, not 1)
+	  CMP R0, #400		; check if end of array is reached and exit loop if so
+	  BHS loop2
 	  
-	  
-	  
-	  
-	  
-	  
-	  BL SysTick_Init	; call SysTick initialization
+	  ; call SysTick initialization
+	  BL SysTick_Init	
       POP {R0-R3,PC}
 ;Debug capture      
 Debug_Capture 
